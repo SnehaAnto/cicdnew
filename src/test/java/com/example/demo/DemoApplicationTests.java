@@ -1,30 +1,37 @@
+
 package com.example.demo;
-import org.springframework.beans.factory.annotation.Autowired;
-import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class DemoApplicationTests {
-    @LocalServerPort
-    private int port;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class DoubleNumControllerTests {
 
     @Autowired
-    private TestRestTemplate restTemplate;
-    private DoubleNumController controller;
+    private MockMvc mockMvc;
 
     @Test
-    void contextLoads() throws Exception {
-        assertThat(controller).isNotNull();
+    void doubleShouldReturnDefaultAnswer() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/double"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(10));
     }
+
     @Test
-    void doubleShouldReturnDefaultValue() {
-
-        int result = this.restTemplate.getForObject("http://localhost:" + port + "/double?value=" + 5, Integer.class);
-        assertThat(result).isEqualTo(10);
+    void doubleShouldReturnCustomValue() throws Exception {
+        int customValue = 90;
+        mockMvc.perform(MockMvcRequestBuilders.get("/double").param("value", String.valueOf(customValue)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(180)); // The result should be double of the custom value
     }
-
 }
-
