@@ -32,6 +32,6 @@ class DoubleNumControllerTests {
         mockMvc.perform(MockMvcRequestBuilders.get("/double").param("value", String.valueOf(customValue)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").value(180)); // The result should be double of the custom value
+                .andExpect(jsonPath("$").value(180));
     }
 }
