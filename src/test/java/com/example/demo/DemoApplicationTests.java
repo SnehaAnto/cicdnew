@@ -8,15 +8,29 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+
 class DoubleNumControllerTests {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
+
+    @Test
+    void doubleShouldReturnDefaultValue() {
+
+        int result = this.restTemplate.getForObject("http://localhost:" + port + "/double?value=" + 5, Integer.class);
+        assertThat(result).isEqualTo(10);
+    }
 
     @Test
     void doubleShouldReturnDefaultAnswer() throws Exception {
